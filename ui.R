@@ -9,11 +9,9 @@ ui <- dashboardPage(
       tabName = 'visaogeral',
       icon = icon('table')
     ),
-    menuItem(
-      'Análise',
-      tabName = 'analise',
-      icon = icon('chart-area')
-    ),
+    menuItem('Análise',
+             tabName = 'analise',
+             icon = icon('chart-area')),
     menuItem('Mapa',
              tabName = 'mapa',
              icon = icon('map')),
@@ -57,14 +55,21 @@ ui <- dashboardPage(
               )))),
       
       # Tab4
-      tabItem(tabName = 'sobre',
-              fluidRow(box(h2(
-                'teste2'
-              ))),
-              fluidRow(
-                box(title = 'Mapa',  width = 400,
-                    leafletOutput('mapa'))
-              ))
+      tabItem(
+        tabName = 'sobre',
+        hr(),
+        h2(
+          'Dashboard elaborado para a disciplina de  VISUALIZAÇÃO DE DADOS, Pós-Graduação Big-Data,
+                 UNIVERSIDADE DO VALE DO ITAJAÍ'
+        ),
+        h3(
+          'Acadêmicos: Alfonso Monestel, Michel Duarte, Jaceguay Zukoski, William da Silva'
+        ),
+        h3(
+          'Dados cedidos pela Coordenadoria de Trânsito de Itajaí: arquivo .csv.'
+        ),
+        h3('Tecnologias utilizadas: Leaflet, R-Studio, R-Shiny')
+      )
     )
   )
 )
