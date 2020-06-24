@@ -31,4 +31,21 @@ shinyServer(function (input, output) {
         title = "Tipo de ocorrências"
       )
   })
+  #dados gerais
+  output$mesanterior <- renderValueBox({
+    valueBox(
+      subset(agregMes, mes == 3)$total,
+      "Total mês anterior",
+      icon = icon("calendar-minus"),
+      color = "yellow"
+    )
+  })
+  output$mesatual <- renderValueBox({
+    valueBox(
+      subset(agregMes, mes == 4)$total,
+      "Total Abril",
+      icon = icon("calendar-alt"),
+      color = "red"
+    )
+  })
 })

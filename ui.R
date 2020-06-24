@@ -27,13 +27,10 @@ ui <- dashboardPage(
     tabItems(
       # Tab1
       tabItem(tabName = 'visaogeral',
-              fluidRow(box(h3(
-                'cx1'
+              fluidRow(
+                valueBoxOutput('mesanterior'),
+                valueBoxOutput('mesatual')
               )),
-              
-              box(h3(
-                'cx2'
-              )))),
       
       # Tab2
       tabItem(tabName = 'analise',
