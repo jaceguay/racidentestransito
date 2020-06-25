@@ -3,6 +3,7 @@ library(leaflet)
 library(lubridate)
 library(dplyr)
 library(ggplot2)
+library(tidyr)
 
 ### padronizando o tema do ggplot...
 seta <- grid::arrow(length = grid::unit(0.2, "cm"), type = "open")
@@ -101,9 +102,15 @@ plot2 <- ggplot(NULL, aes(dia, acum)) +
   scale_x_continuous(name = "dias", breaks = c(1, 5, 10, 15, 20, 25, 28, 31)) +
   scale_y_continuous('nºocorrências') +
   labs(title = 'Situação atual') +
-  theme(axis.text.x = element_text(angle = -90, vjust = 0.5), ) +
+  theme(axis.text.x = element_text(angle = -90, vjust = 0.5),) +
   my_theme()
 plot2
+
+mesPivot <-
+  pivot_wider(agregMesDia,
+               id_cols = dia,
+               names_from = mes,
+               values_from = total)
 
 # histograma acidentes dia
 
