@@ -26,7 +26,7 @@ my_theme <- function (base_size = 14,
 # valores
 dados <-
   read.csv(
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTukBFwIgjXG73jrvr38ePIQOLqCrD5M5b6F8Kuff2A3QOAuWjeoWDqNWkoa8Q5SStEVN0vh47RokOt/pub?gid=684987162&single=true&output=csv",
+    "dados.csv",
     header = TRUE,
     stringsAsFactors = FALSE
   )
