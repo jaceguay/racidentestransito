@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="utf-8" />
+    <title>Acidentes de trânsito, 2019, Janeiro-Março</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+        crossorigin=""></script>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <style>
+        :root {
+            --base: #00bcd4;
+            --escuro: #333;
+            --claro: white;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+        .conteiner1 {
+            display: flex;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            height: 100%;
+            min-height: 100%;
+            width: 100%;
+        }
+
+        #mapa {
+            background: var(--claro);
+            flex: 4;
+        }
+
+        #consultabela {
+            background: var(--claro);
+            /* flex: 2; */
+            width: 300px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class='conteiner1'>
+        <div id="mapa"></div>
+        <div id="consultabela"></div>
+    </div>
+
+    <script>
+        console.log('live')
+        // Mapa
+        let mapa = new L.Map('mapa', {
+            zoom: 14,
+            minZoom: 12,
+            maxZoom: 20,
+            maxBounds: [
+                //south west
+                [-27.3000, -49.2300],
+                //north east
+                [-26.3285, -48.3200]
+            ],
+            center: new L.latLng([-26.9046, -48.6874]),
+            zoomControl: false,
+            preferCanvas: true
+        });
+
+        // Mapa base, OSM
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(mapa);
+
+        // barra escala
+        L.control.scale({
+            position: "bottomleft",
+            imperial: false
+        }).addTo(mapa);
+
+        // Botão zoom posicionado
+        L.control.zoom({
+            position: 'bottomleft'
+        }).addTo(mapa);
+
+        // Norte
+        let nortemapa = L.control({
+            position: 'bottomleft'
+        });
+        nortemapa.onAdd = (map) => {
+            let div = L.DomUtil.create('div', 'info2 legend');
+            div.innerHTML +=
+                '<center><sub><font size="4">▲</font></sub><br/>' +
+                '<sup><font size="2">N</font></sup></center>'
+            return div;
+        };
+        nortemapa.addTo(mapa);
+
+        // Pontos ocorrências
+        let pontosOcorrencias = L.featureGroup().addTo(mapa);
+        let pontosOcortolltips = L.featureGroup();
+        let pontoSelecionado = L.featureGroup().addTo(mapa);
+
+        interacaofeicao = (feature, layer) => {
+            layer.on({
+                click: (feature) => {
+                    pontoSelecionado.clearLayers();
+                    L.marker(feature.target._latlng).addTo(pontoSelecionado);
+                }
+            });
+        };
+
+        $.getJSON("dados/agregado_intersecao.geojson", (data) => {
+            L.geoJson(data, {
+                pointToLayer: (feature, latlng) => {
+                    let raio;
+                    let cor;
+                    if (feature.properties.total > 3) {
+                        raio = feature.properties.total * 2
+                        cor = 'red'
+                    } else if (feature.properties.total > 1) {
+                        raio = feature.properties.total * 1.5;
+                        cor = 'orange'
+                    } else { raio = 3, cor = 'blue' };
+
+                    return L.circleMarker(latlng, {
+                        radius: raio,
+                        color: cor
+                    });
+                },
+                onEachFeature: interacaofeicao
+            }).addTo(pontosOcorrencias);
+            L.geoJson(data, {
+                pointToLayer: (feature, latlng) => {
+                    let raio;
+                    let cor;
+                    if (feature.properties.total > 3) {
+                        raio = feature.properties.total * 3
+                        cor = 'red'
+                    } else if (feature.properties.total > 1) {
+                        raio = feature.properties.total * 2;
+                        cor = 'orange'
+                    } else { raio = 5, cor = 'blue' };
+
+                    return L.circleMarker(latlng, {
+                        radius: raio,
+                        color: cor
+                    });
+                },
+                onEachFeature: interacaofeicao
+            }).bindTooltip(function (layer) {
+                return 'bbbb';
+            }, {
+                permanent: true
+            }
+            ).addTo(pontosOcortolltips);
+        });
+
+        //visibilidade, bairros/pontos ocorrências
+        mapa.on('zoomend', () => {
+            if (mapa.getZoom() < 14) {
+                mapa.removeLayer(pontosOcorrencias);
+                mapa.removeLayer(pontosOcortolltips);
+            } else if (mapa.getZoom() >= 14 && mapa.getZoom() < 16) {
+                mapa.addLayer(pontosOcorrencias);
+                mapa.removeLayer(pontosOcortolltips);
+            } else if (mapa.getZoom() >= 16) {
+                mapa.removeLayer(pontosOcorrencias);
+                mapa.addLayer(pontosOcortolltips);
+            };
+        });
+
+    </script>
+
+</body>
+
+</html>
