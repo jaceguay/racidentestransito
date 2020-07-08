@@ -57,6 +57,15 @@
             /* flex: 2; */
             width: 300px;
         }
+
+        .leaflet-tooltip.rotulos {
+            background-color: transparent;
+            border: transparent;
+            box-shadow: none;
+            font-weight: bold;
+            font-weight: 900;
+            color: #000066;
+        }
     </style>
 
 </head>
@@ -68,7 +77,6 @@
     </div>
 
     <script>
-        console.log('live')
         // Mapa
         let mapa = new L.Map('mapa', {
             zoom: 14,
@@ -137,11 +145,11 @@
                     let cor;
                     if (feature.properties.total > 3) {
                         raio = feature.properties.total * 2
-                        cor = 'red'
+                        cor = '#e62e00'
                     } else if (feature.properties.total > 1) {
                         raio = feature.properties.total * 1.5;
-                        cor = 'orange'
-                    } else { raio = 3, cor = 'blue' };
+                        cor = '#ff3300'
+                    } else { raio = 3, cor = '#ff704d' };
 
                     return L.circleMarker(latlng, {
                         radius: raio,
@@ -154,26 +162,25 @@
                 pointToLayer: (feature, latlng) => {
                     let raio;
                     let cor;
+                    let label;
+                    if (feature.properties.total > 2) {
+                        label = String(feature.properties.total)
+                    } else { label = '' };
                     if (feature.properties.total > 3) {
                         raio = feature.properties.total * 3
-                        cor = 'red'
+                        cor = '#e62e00'
                     } else if (feature.properties.total > 1) {
-                        raio = feature.properties.total * 2;
-                        cor = 'orange'
-                    } else { raio = 5, cor = 'blue' };
+                        raio = feature.properties.total * 2.5;
+                        cor = '#ff3300'
+                    } else { raio = 5, cor = '#ff704d' };
 
                     return L.circleMarker(latlng, {
                         radius: raio,
                         color: cor
-                    });
+                    }).bindTooltip(label, { permanent: true, direction: 'center', className: "rotulos" }).openTooltip();
                 },
                 onEachFeature: interacaofeicao
-            }).bindTooltip(function (layer) {
-                return 'bbbb';
-            }, {
-                permanent: true
-            }
-            ).addTo(pontosOcortolltips);
+            }).addTo(pontosOcortolltips);
         });
 
         //visibilidade, bairros/pontos ocorrências
