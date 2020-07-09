@@ -75,11 +75,12 @@
 
 <body>
     <div class='conteiner1'>
-        <div id="mapa"></div>
-        <div id="consultabela">
-            <div id="chart_div"></div>
-            <div id="columnchart_values"></div>
-            <div id="donutchart"></div>
+        <div id='mapa'></div>
+        <div id='consultabela'>
+            <div id='chartA'></div>
+            <div><br></div>
+            <div id='chartB'></div>
+            <div id='chartC'></div>
         </div>
     </div>
 
@@ -136,12 +137,50 @@
         let pontosOcortolltips = L.featureGroup();
         let pontoSelecionado = L.featureGroup().addTo(mapa);
 
+        // click feição
         interacaofeicao = (feature, layer) => {
             layer.on({
                 click: (feature) => {
                     pontoSelecionado.clearLayers();
-                    L.marker(feature.target._latlng).addTo(pontoSelecionado);
-                    drawChart();
+                    L.marker(feature.target._latlng)
+                        .addTo(pontoSelecionado)
+                        .bindPopup(feature.target.feature.properties.intersecao)
+                        .openPopup();
+
+                    console.log(feature.target.feature.properties)
+
+                    let chHora = [
+                        ['hr.', 'ocorr.', { role: "style" }],
+                        ['5-9', parseInt(feature.target.feature.properties['5-9']), "#9933ff"],
+                        ['9-11', parseInt(feature.target.feature.properties['9-11']), "#9966ff"],
+                        ['11-14', parseInt(feature.target.feature.properties['11-14']), "#6666ff"],
+                        ['14-17', parseInt(feature.target.feature.properties['14-17']), "#3366ff"],
+                        ['17-20', parseInt(feature.target.feature.properties['17-20']), "#0040ff"],
+                        ['20-00', parseInt(feature.target.feature.properties['20-23']), "#002699"]
+                    ];
+                    drawChartA(chHora);
+
+                    let chTipoOcorr = [
+                        ['tipo', 'nº ocorr.'],
+                        ['abalroamento', parseInt(feature.target.feature.properties['abalroamento'])],
+                        ['atropelamento', parseInt(feature.target.feature.properties['atropelamento'])],
+                        ['choque', parseInt(feature.target.feature.properties['choque'])],
+                        ['colisão', parseInt(feature.target.feature.properties['colisão'])],
+                        ['engavetamento', parseInt(feature.target.feature.properties['engavetamento'])],
+                        ['queda', parseInt(feature.target.feature.properties['queda'])],
+                        ['tombamento', parseInt(feature.target.feature.properties['tombamento'])],
+                        ['outros', parseInt(feature.target.feature.properties['outros'])]
+                    ];
+                    drawChartB(chTipoOcorr);
+
+                    let chVeiculos = [
+                        ['tipo', 'nº envolv.'],
+                        ['motocicleta', parseInt(feature.target.feature.properties['motocicleta'])],
+                        ['transp.coletivo', parseInt(feature.target.feature.properties['transp.coletivo'])],
+                        ['veículo leve', parseInt(feature.target.feature.properties['veículo leve'])],
+                        ['veículo pesado', parseInt(feature.target.feature.properties['veículo pesado'])]
+                    ];
+                    drawChartC(chVeiculos);
                 }
             });
         };
@@ -210,63 +249,15 @@
         google.charts.load('current', { 'packages': ['corechart'] });
 
         // Set a callback to run when the Google Visualization API is loaded.
-        google.charts.setOnLoadCallback(drawChartA);
-        google.charts.setOnLoadCallback(drawChartB);
-        google.charts.setOnLoadCallback(drawChartC);
+        //google.charts.setOnLoadCallback(drawChartA);
+        //google.charts.setOnLoadCallback(drawChartB);
+        //google.charts.setOnLoadCallback(drawChartC);
 
         // Callback that creates and populates a data table,
         // instantiates the pie chart, passes in the data and
         // draws it.
-        function drawChartA() {
-            var data = google.visualization.arrayToDataTable([
-                ['Dinosaur', 'Length'],
-                ['Acrocanthosaurus (top-spined lizard)', 12.2],
-                ['Albertosaurus (Alberta lizard)', 9.1],
-                ['Allosaurus (other lizard)', 12.2],
-                ['Apatosaurus (deceptive lizard)', 22.9],
-                ['Archaeopteryx (ancient wing)', 0.9],
-                ['Argentinosaurus (Argentina lizard)', 36.6],
-                ['Baryonyx (heavy claws)', 9.1],
-                ['Brachiosaurus (arm lizard)', 30.5],
-                ['Ceratosaurus (horned lizard)', 6.1],
-                ['Coelophysis (hollow form)', 2.7],
-                ['Compsognathus (elegant jaw)', 0.9],
-                ['Deinonychus (terrible claw)', 2.7],
-                ['Diplodocus (double beam)', 27.1],
-                ['Dromicelomimus (emu mimic)', 3.4],
-                ['Gallimimus (fowl mimic)', 5.5],
-                ['Mamenchisaurus (Mamenchi lizard)', 21.0],
-                ['Megalosaurus (big lizard)', 7.9],
-                ['Microvenator (small hunter)', 1.2],
-                ['Ornithomimus (bird mimic)', 4.6],
-                ['Oviraptor (egg robber)', 1.5],
-                ['Plateosaurus (flat lizard)', 7.9],
-                ['Sauronithoides (narrow-clawed lizard)', 2.0],
-                ['Seismosaurus (tremor lizard)', 45.7],
-                ['Spinosaurus (spiny lizard)', 12.2],
-                ['Supersaurus (super lizard)', 30.5],
-                ['Tyrannosaurus (tyrant lizard)', 15.2],
-                ['Ultrasaurus (ultra lizard)', 30.5],
-                ['Velociraptor (swift robber)', 1.8]]);
-            let options = {
-                title: 'Lengths of dinosaurs, in meters',
-                width: 300,
-                height: 200,
-                legend: { position: 'none' },
-            };
-            // Instantiate and draw our chart, passing in some options.
-            let chartA = new google.visualization.Histogram(document.getElementById('chart_div'));
-            chartA.draw(data, options);
-        };
-
-        function drawChartB() {
-            let data = google.visualization.arrayToDataTable([
-                ["Element", "Density", { role: "style" }],
-                ["Copper", 8.94, "#b87333"],
-                ["Silver", 10.49, "silver"],
-                ["Gold", 19.30, "gold"],
-                ["Platinum", 21.45, "color: #e5e4e2"]
-            ]);
+        function drawChartA(valores) {
+            let data = google.visualization.arrayToDataTable(valores);
 
             let view = new google.visualization.DataView(data);
             view.setColumns([0, 1,
@@ -279,30 +270,24 @@
                 2]);
 
             let options = {
-                title: "Density of Precious Metals, in g/cm^3",
+                title: "Nº de ocorrências / faixa horário",
                 width: 300,
                 height: 200,
                 bar: { groupWidth: "95%" },
                 legend: { position: "none" }
             };
-            let chartB = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
-            chartB.draw(view, options);
+            let chartA = new google.visualization.ColumnChart(document.getElementById("chartA"));
+            chartA.draw(view, options);
         };
 
-        function drawChartC() {
-            let data = google.visualization.arrayToDataTable([
-                ['Task', 'Hours per Day'],
-                ['Work', 11],
-                ['Eat', 2],
-                ['Commute', 2],
-                ['Watch TV', 2],
-                ['Sleep', 7]
-            ]);
+        function drawChartB(valores) {
+            let data = google.visualization.arrayToDataTable(valores);
 
             let options = {
-                title: 'My Daily Activities',
+                title: 'Tipo de ocorrências',
                 pieHole: 0.4,
-                width: 300,
+                pieSliceText: 'none',
+                width: 280,
                 height: 200,
                 legend: {
                     position: "top",
@@ -310,7 +295,25 @@
                 },
             };
 
-            let chartC = new google.visualization.PieChart(document.getElementById('donutchart'));
+            let chartB = new google.visualization.PieChart(document.getElementById('chartB'));
+            chartB.draw(data, options);
+        };
+
+        function drawChartC(valores) {
+            let data = google.visualization.arrayToDataTable(valores);
+
+            let options = {
+                title: 'Categoria veículos envolvidos',
+                pieHole: 0.4,
+                width: 280,
+                height: 200,
+                legend: {
+                    position: "top",
+                    maxLines: 5
+                },
+            };
+
+            let chartC = new google.visualization.PieChart(document.getElementById('chartC'));
             chartC.draw(data, options);
         };
 
