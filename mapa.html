@@ -78,8 +78,12 @@
         <div id='mapa'></div>
         <div id='consultabela'>
             <div id='chartA'></div>
-            <div><br></div>
-            <div id='chartB'></div>
+            <div><br> </div>
+            <div id='chartB'>
+                <p>
+                    <center>Clique sobre uma interseção ou bairro para visualizar os detalhes</center>
+                </p>
+            </div>
             <div id='chartC'></div>
         </div>
     </div>
@@ -245,18 +249,41 @@
         });
 
         //Google charts
-        // Load the Visualization API and the corechart package.
+        //Valor Município (inicial)
+        let MunchHora = [
+            ['hr.', 'ocorr.', { role: "style" }],
+            ['5-9', 150, "#9933ff"],
+            ['9-11', 117, "#9966ff"],
+            ['11-14', 182, "#6666ff"],
+            ['14-17', 170, "#3366ff"],
+            ['17-20', 130, "#0040ff"],
+            ['20-00', 32, "#002699"]
+        ];
+
+
+        let MunchTipoOcorr = [
+            ['tipo', 'nº ocorr.'],
+            ['abalroamento', 67],
+            ['atropelamento', 5],
+            ['choque', 19],
+            ['colisão', 653],
+            ['engavetamento', 19],
+            ['queda', 18],
+            ['tombamento', 1],
+            ['outros', 4]
+        ];
+
+        let MunchVeiculos = [
+            ['tipo', 'nº envolv.'],
+            ['motocicleta', 250],
+            ['transp.coletivo', 30],
+            ['veículo leve', 1142],
+            ['veículo pesado', 203]
+        ];
+
         google.charts.load('current', { 'packages': ['corechart'] });
 
-        // Set a callback to run when the Google Visualization API is loaded.
-        //google.charts.setOnLoadCallback(drawChartA);
-        //google.charts.setOnLoadCallback(drawChartB);
-        //google.charts.setOnLoadCallback(drawChartC);
-
-        // Callback that creates and populates a data table,
-        // instantiates the pie chart, passes in the data and
-        // draws it.
-        function drawChartA(valores) {
+        drawChartA = (valores) => {
             let data = google.visualization.arrayToDataTable(valores);
 
             let view = new google.visualization.DataView(data);
@@ -279,8 +306,11 @@
             let chartA = new google.visualization.ColumnChart(document.getElementById("chartA"));
             chartA.draw(view, options);
         };
+        drawA = () => {
+            drawChartA(MunchHora);
+        };
 
-        function drawChartB(valores) {
+        drawChartB = (valores) => {
             let data = google.visualization.arrayToDataTable(valores);
 
             let options = {
@@ -293,29 +323,43 @@
                     position: "top",
                     maxLines: 5
                 },
+                colors: ['#3333cc', '#ff33cc', '#ffcc00', '#adc2eb', '#ff00ff', '#ff9999', '#ffff99', '#00ff99']
             };
 
             let chartB = new google.visualization.PieChart(document.getElementById('chartB'));
             chartB.draw(data, options);
         };
+        drawB = () => {
+            drawChartB(MunchTipoOcorr);
+        };
 
-        function drawChartC(valores) {
+        drawChartC = (valores) => {
             let data = google.visualization.arrayToDataTable(valores);
 
             let options = {
                 title: 'Categoria veículos envolvidos',
                 pieHole: 0.4,
+                pieSliceText: 'none',
                 width: 280,
                 height: 200,
                 legend: {
                     position: "top",
                     maxLines: 5
                 },
+                colors: ['#3333cc', '#ff33cc', '#ffcc00', '#adc2eb', '#ff00ff', '#ff9999', '#ffff99', '#00ff99']
             };
 
             let chartC = new google.visualization.PieChart(document.getElementById('chartC'));
             chartC.draw(data, options);
         };
+        drawC = () => {
+            drawChartC(MunchVeiculos);
+        };
+
+        // Callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawA);
+        google.charts.setOnLoadCallback(drawB);
+        google.charts.setOnLoadCallback(drawC);
 
     </script>
 
