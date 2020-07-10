@@ -146,10 +146,12 @@
         });
 
         // Pontos ocorrências
+        let pontosOcorrenciasB = L.featureGroup();
         let pontosOcorrencias = L.featureGroup().addTo(mapa);
         let pontosOcortolltips = L.featureGroup();
         let pontoSelecionado = L.featureGroup().addTo(mapa);
         let bairros = L.featureGroup();
+        let bairrosB = L.featureGroup().addTo(mapa);
 
         // click feição
         interacaofeicao = (feature, layer) => {
@@ -252,6 +254,32 @@
                 },
                 onEachFeature: interacaofeicao
             }).addTo(pontosOcortolltips);
+
+            L.geoJson(data, {
+                pointToLayer: (feature, latlng) => {
+                    let raio;
+                    let cor;
+                    let label;
+                    if (feature.properties.total > 2) {
+                        label = String(feature.properties.total)
+                    } else { label = '' };
+                    if (feature.properties.total > 3) {
+                        raio = feature.properties.total
+                        cor = '#e62e00'
+                    } else if (feature.properties.total > 1) {
+                        raio = feature.properties.total * 1.5;
+                        cor = '#ff3300'
+                    } else { raio = 5, cor = '#ff704d' };
+
+                    return L.circleMarker(latlng, {
+                        radius: raio,
+                        color: cor,
+                        stroke: false,
+                        interactive: false
+
+                    });
+                }
+            }).addTo(pontosOcorrenciasB);
         });
 
         // bairros
@@ -260,53 +288,97 @@
                 style: (feature) => {
                     let corzona;
                     cormz = feature.properties.nome;
-                    if (cormz === 'Barra do Rio') corzona = "#ffc821";
-                    else if (cormz === 'Arraial dos Cunha') corzona = "#11cd00";
-                    else if (cormz === 'Brilhante II') corzona = "#ffc821";
-                    else if (cormz === 'Cabeçudas') corzona = "#ffc821";
-                    else if (cormz === 'Canhanduba') corzona = "#917951";
-                    else if (cormz === 'Carvalho') corzona = "#917951";
-                    else if (cormz === 'Centro') corzona = "#ff5765";
-                    else if (cormz === 'Cidade Nova') corzona = "#ff5765";
-                    else if (cormz === 'Cordeiros') corzona = "#ff5765";
-                    else if (cormz === 'Dom Bosco') corzona = "#7cc5ab";
-                    else if (cormz === 'Espinheiros') corzona = "#7cc5ab";
-                    else if (cormz === 'Fazenda') corzona = "#7cc5ab";
-                    else if (cormz === 'Fazendinha') corzona = "#d4d4bc";
-                    else if (cormz === 'Itaipava') corzona = "#d4d4bc";
-                    else if (cormz === 'Limoeiro') corzona = "#d4d4bc";
-                    else if (cormz === 'Murta') corzona = "#c82d2d";
-                    else if (cormz === 'Nossa Senhora das Graças') corzona = "#c82d2d";
-                    else if (cormz === 'Praia Brava de Itajaí') corzona = "#c82d2d";
-                    else if (cormz === 'Ressacada') corzona = "#caf5f5";
-                    else if (cormz === 'Rio do Meio') corzona = "#caf5f5";
-                    else if (cormz === 'Santa Regina') corzona = "#468e57";
-                    else if (cormz === 'São João') corzona = "#468e57";
-                    else if (cormz === 'São Judas') corzona = "#468e57";
-                    else if (cormz === 'São Roque') corzona = "#11cd00";
-                    else if (cormz === 'São Vicente') corzona = "#11cd00";
-                    else if (cormz === 'Vila Operária') corzona = "#71b580";
+                    if (cormz === 'Centro') corzona = "#800000";
+                    else if (cormz === 'Cordeiros') corzona = "#993333";
+                    else if (cormz === 'São Vicente') corzona = "#993333";
+                    else if (cormz === 'Fazenda') corzona = "#cc0000";
+                    else if (cormz === 'São João') corzona = "#cc0000";
+                    else if (cormz === 'Dom Bosco') corzona = "#ff0000";
+                    else if (cormz === 'Barra do Rio') corzona = "#ff0000";
+                    else if (cormz === 'Cidade Nova') corzona = "#ff0000";
+                    else if (cormz === 'Vila Operária') corzona = "#ff6600";
+                    else if (cormz === 'Fazendinha') corzona = "#ff9966";
+                    else if (cormz === 'Praia Brava de Itajaí') corzona = "#ff9966";
+                    else if (cormz === 'São Judas') corzona = "#ff9966";
+                    else if (cormz === 'Carvalho') corzona = "#ff9966";
+                    else if (cormz === 'Espinheiros') corzona = "#ffcc99";
+                    else if (cormz === 'Canhanduba') corzona = "#ffcc99";
+                    else if (cormz === 'Nossa Senhora das Graças') corzona = "#ffcc99";
+                    else if (cormz === 'Santa Regina') corzona = "#ffcc99";
+                    else if (cormz === 'Cabeçudas') corzona = "#ffcc99";
+                    else if (cormz === 'Ressacada') corzona = "#ffcc99";
+                    else if (cormz === 'Murta') corzona = "#ffff99";
+                    else if (cormz === 'Arraial dos Cunha') corzona = "#ffff99";
+                    else if (cormz === 'Rio do Meio') corzona = "#ffff99";
+                    else if (cormz === 'Brilhante II') corzona = "#ffffcc";
+                    else if (cormz === 'Itaipava') corzona = "#ffffcc";
+                    else if (cormz === 'Limoeiro') corzona = "#ffffcc";
+                    else if (cormz === 'São Roque') corzona = "#ffffcc";
                     else corzona = "#fff";
-                    return { /*stroke: false,*/ fillColor: corzona, fillOpacity: 0.4 };
+                    return { weight: 1, color: 'black',fillColor: corzona, opacity: 0.65 };
                 },
                 onEachFeature: interacaofeicao
             }).addTo(bairros);
+
+            //bairros preguiça infinita
+            L.geoJson(data, {
+                style: (feature) => {
+                    let corzona;
+                    cormz = feature.properties.nome;
+                    if (cormz === 'Centro') corzona = "#800000";
+                    else if (cormz === 'Cordeiros') corzona = "#993333";
+                    else if (cormz === 'São Vicente') corzona = "#993333";
+                    else if (cormz === 'Fazenda') corzona = "#cc0000";
+                    else if (cormz === 'São João') corzona = "#cc0000";
+                    else if (cormz === 'Dom Bosco') corzona = "#ff0000";
+                    else if (cormz === 'Barra do Rio') corzona = "#ff0000";
+                    else if (cormz === 'Cidade Nova') corzona = "#ff0000";
+                    else if (cormz === 'Vila Operária') corzona = "#ff6600";
+                    else if (cormz === 'Fazendinha') corzona = "#ff9966";
+                    else if (cormz === 'Praia Brava de Itajaí') corzona = "#ff9966";
+                    else if (cormz === 'São Judas') corzona = "#ff9966";
+                    else if (cormz === 'Carvalho') corzona = "#ff9966";
+                    else if (cormz === 'Espinheiros') corzona = "#ffcc99";
+                    else if (cormz === 'Canhanduba') corzona = "#ffcc99";
+                    else if (cormz === 'Nossa Senhora das Graças') corzona = "#ffcc99";
+                    else if (cormz === 'Santa Regina') corzona = "#ffcc99";
+                    else if (cormz === 'Cabeçudas') corzona = "#ffcc99";
+                    else if (cormz === 'Ressacada') corzona = "#ffcc99";
+                    else if (cormz === 'Murta') corzona = "#ffff99";
+                    else if (cormz === 'Arraial dos Cunha') corzona = "#ffff99";
+                    else if (cormz === 'Rio do Meio') corzona = "#ffff99";
+                    else if (cormz === 'Brilhante II') corzona = "#ffffcc";
+                    else if (cormz === 'Itaipava') corzona = "#ffffcc";
+                    else if (cormz === 'Limoeiro') corzona = "#ffffcc";
+                    else if (cormz === 'São Roque') corzona = "#ffffcc";
+                    else corzona = "#fff";
+                    return { interactive: false, stroke: false, fillColor: corzona, Opacity: 0.90 };
+                },
+                onEachFeature: interacaofeicao
+            }).addTo(bairrosB);
         });
+
 
         // visibilidade, bairros/pontos ocorrências
         mapa.on('zoomend', () => {
             if (mapa.getZoom() < 14) {
                 mapa.removeLayer(pontosOcorrencias);
                 mapa.removeLayer(pontosOcortolltips);
+                mapa.removeLayer(bairrosB);
                 mapa.addLayer(bairros);
+                mapa.addLayer(pontosOcorrenciasB);
             } else if (mapa.getZoom() >= 14 && mapa.getZoom() < 16) {
                 mapa.addLayer(pontosOcorrencias);
+                mapa.addLayer(bairrosB);
                 mapa.removeLayer(pontosOcortolltips);
                 mapa.removeLayer(bairros);
+                mapa.removeLayer(pontosOcorrenciasB);
             } else if (mapa.getZoom() >= 16) {
                 mapa.removeLayer(pontosOcorrencias);
                 mapa.addLayer(pontosOcortolltips);
                 mapa.removeLayer(bairros);
+                mapa.removeLayer(bairrosB);
+                mapa.removeLayer(pontosOcorrenciasB);
             };
         });
 
