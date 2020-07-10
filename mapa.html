@@ -136,6 +136,15 @@
         };
         nortemapa.addTo(mapa);
 
+        // Divisa Intermunicipal
+        $.getJSON("dados/divisasdiff.geojson", (data) => {
+            L.geoJson(data, {
+                style: (feature) => {
+                    return { color: 'gray', weight: 2, Opacity: 0.5, interactive: false };
+                }
+            }).addTo(mapa);
+        });
+
         // Pontos ocorrências
         let pontosOcorrencias = L.featureGroup().addTo(mapa);
         let pontosOcortolltips = L.featureGroup();
