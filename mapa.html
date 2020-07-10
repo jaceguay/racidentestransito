@@ -149,19 +149,30 @@
         let pontosOcorrencias = L.featureGroup().addTo(mapa);
         let pontosOcortolltips = L.featureGroup();
         let pontoSelecionado = L.featureGroup().addTo(mapa);
+        let bairros = L.featureGroup();
 
         // click feição
         interacaofeicao = (feature, layer) => {
             layer.on({
                 click: (feature) => {
+                    // ponto e popup
                     pontoSelecionado.clearLayers();
-                    L.marker(feature.target._latlng)
+                    let coordpt;
+                    let nomept;
+                    if (feature.target._latlng === undefined) {
+                        //console.log(feature.target.feature.properties);
+                        coordpt = feature.target.getBounds().getCenter();
+                        nomept = feature.target.feature.properties.nome;
+                    } else {
+                        coordpt = feature.target._latlng;
+                        nomept = feature.target.feature.properties.intersecao;
+                    };
+                    L.marker(coordpt)
                         .addTo(pontoSelecionado)
-                        .bindPopup(feature.target.feature.properties.intersecao)
+                        .bindPopup(nomept)
                         .openPopup();
 
-                    console.log(feature.target.feature.properties)
-
+                    // tabelas
                     let chHora = [
                         ['hr.', 'ocorr.', { role: "style" }],
                         ['5-9', parseInt(feature.target.feature.properties['5-9']), "#9933ff"],
@@ -243,17 +254,59 @@
             }).addTo(pontosOcortolltips);
         });
 
-        //visibilidade, bairros/pontos ocorrências
+        // bairros
+        $.getJSON("dados/bairrosTab.geojson", (data) => {
+            L.geoJson(data, {
+                style: (feature) => {
+                    let corzona;
+                    cormz = feature.properties.nome;
+                    if (cormz === 'Barra do Rio') corzona = "#ffc821";
+                    else if (cormz === 'Arraial dos Cunha') corzona = "#11cd00";
+                    else if (cormz === 'Brilhante II') corzona = "#ffc821";
+                    else if (cormz === 'Cabeçudas') corzona = "#ffc821";
+                    else if (cormz === 'Canhanduba') corzona = "#917951";
+                    else if (cormz === 'Carvalho') corzona = "#917951";
+                    else if (cormz === 'Centro') corzona = "#ff5765";
+                    else if (cormz === 'Cidade Nova') corzona = "#ff5765";
+                    else if (cormz === 'Cordeiros') corzona = "#ff5765";
+                    else if (cormz === 'Dom Bosco') corzona = "#7cc5ab";
+                    else if (cormz === 'Espinheiros') corzona = "#7cc5ab";
+                    else if (cormz === 'Fazenda') corzona = "#7cc5ab";
+                    else if (cormz === 'Fazendinha') corzona = "#d4d4bc";
+                    else if (cormz === 'Itaipava') corzona = "#d4d4bc";
+                    else if (cormz === 'Limoeiro') corzona = "#d4d4bc";
+                    else if (cormz === 'Murta') corzona = "#c82d2d";
+                    else if (cormz === 'Nossa Senhora das Graças') corzona = "#c82d2d";
+                    else if (cormz === 'Praia Brava de Itajaí') corzona = "#c82d2d";
+                    else if (cormz === 'Ressacada') corzona = "#caf5f5";
+                    else if (cormz === 'Rio do Meio') corzona = "#caf5f5";
+                    else if (cormz === 'Santa Regina') corzona = "#468e57";
+                    else if (cormz === 'São João') corzona = "#468e57";
+                    else if (cormz === 'São Judas') corzona = "#468e57";
+                    else if (cormz === 'São Roque') corzona = "#11cd00";
+                    else if (cormz === 'São Vicente') corzona = "#11cd00";
+                    else if (cormz === 'Vila Operária') corzona = "#71b580";
+                    else corzona = "#fff";
+                    return { /*stroke: false,*/ fillColor: corzona, fillOpacity: 0.4 };
+                },
+                onEachFeature: interacaofeicao
+            }).addTo(bairros);
+        });
+
+        // visibilidade, bairros/pontos ocorrências
         mapa.on('zoomend', () => {
             if (mapa.getZoom() < 14) {
                 mapa.removeLayer(pontosOcorrencias);
                 mapa.removeLayer(pontosOcortolltips);
+                mapa.addLayer(bairros);
             } else if (mapa.getZoom() >= 14 && mapa.getZoom() < 16) {
                 mapa.addLayer(pontosOcorrencias);
                 mapa.removeLayer(pontosOcortolltips);
+                mapa.removeLayer(bairros);
             } else if (mapa.getZoom() >= 16) {
                 mapa.removeLayer(pontosOcorrencias);
                 mapa.addLayer(pontosOcortolltips);
+                mapa.removeLayer(bairros);
             };
         });
 
