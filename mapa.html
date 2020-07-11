@@ -91,7 +91,7 @@
     <script>
         // Mapa
         let mapa = new L.Map('mapa', {
-            zoom: 14,
+            zoom: 13,
             minZoom: 12,
             maxZoom: 20,
             maxBounds: [
@@ -146,12 +146,12 @@
         });
 
         // Pontos ocorrências
-        let pontosOcorrenciasB = L.featureGroup();
-        let pontosOcorrencias = L.featureGroup().addTo(mapa);
+        let pontosOcorrenciasB = L.featureGroup().addTo(mapa);
+        let pontosOcorrencias = L.featureGroup();
         let pontosOcortolltips = L.featureGroup();
         let pontoSelecionado = L.featureGroup().addTo(mapa);
-        let bairros = L.featureGroup();
-        let bairrosB = L.featureGroup().addTo(mapa);
+        let bairros = L.featureGroup().addTo(mapa);
+        let bairrosB = L.featureGroup();
 
         // click feição
         interacaofeicao = (feature, layer) => {
