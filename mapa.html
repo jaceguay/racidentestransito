@@ -275,6 +275,7 @@
                         radius: raio,
                         color: cor,
                         stroke: false,
+                        fillOpacity: 0.15,
                         interactive: false
 
                     });
@@ -315,7 +316,7 @@
                     else if (cormz === 'Limoeiro') corzona = "#ffffcc";
                     else if (cormz === 'São Roque') corzona = "#ffffcc";
                     else corzona = "#fff";
-                    return { weight: 1, color: 'black',fillColor: corzona, opacity: 0.65 };
+                    return { weight: 1, opacity: 0.2, color: 'black', fillColor: corzona, fillOpacity: 0.06 };
                 },
                 onEachFeature: interacaofeicao
             }).addTo(bairros);
@@ -352,7 +353,7 @@
                     else if (cormz === 'Limoeiro') corzona = "#ffffcc";
                     else if (cormz === 'São Roque') corzona = "#ffffcc";
                     else corzona = "#fff";
-                    return { interactive: false, stroke: false, fillColor: corzona, Opacity: 0.90 };
+                    return { interactive: false, stroke: false, fillColor: corzona, fillOpacity: 0.10 };
                 },
                 onEachFeature: interacaofeicao
             }).addTo(bairrosB);
